@@ -1,9 +1,5 @@
 import React from "react";
 import { withFormik } from "formik";
-import dayjs from "dayjs";
-import fetchCitizenData from "../utils/fetchCitizenData";
-
-let responseData = {};
 
 function PersonalDataForm(props) {
   const {
@@ -27,16 +23,30 @@ function PersonalDataForm(props) {
         }}
         onSubmit={handleSubmit}
       >
-        <label htmlFor="cedula">Cedula</label>
+        <label htmlFor="firstName">First Name</label>
         <input
-          id="cedula"
-          name="cedula"
+          id="firstName"
+          name="firstName"
           type="text"
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.cedula}
+          value={values.firstName}
         />
-        <div style={{ color: "red" }}>{touched.cedula && errors.cedula}</div>
+        <div style={{ color: "red" }}>
+          {touched.firstName && errors.firstName}
+        </div>
+        <label htmlFor="lastName">Last Name</label>
+        <input
+          id="lastName"
+          name="lastName"
+          type="text"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.lastName}
+        />
+        <div style={{ color: "red" }}>
+          {touched.lastName && errors.lastName}
+        </div>
         <label htmlFor="birthdate">Birthdate</label>
         <input
           id="birthdate"
@@ -45,9 +55,32 @@ function PersonalDataForm(props) {
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.birthdate}
+          max="3000-12-31"
         />
         <div style={{ color: "red" }}>
           {touched.birthdate && errors.birthdate}
+        </div>
+        <label htmlFor="sex">Sex</label>
+        <input
+          id="sex"
+          name="sex"
+          type="text"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.sex}
+        />
+        <div style={{ color: "red" }}>{touched.sex && errors.sex}</div>
+        <label htmlFor="citizenship">Citizenship</label>
+        <input
+          id="citizenship"
+          name="citizenship"
+          type="text"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.citizenship}
+        />
+        <div style={{ color: "red" }}>
+          {touched.citizenship && errors.citizenship}
         </div>
         <button type="submit">
           Submit
@@ -59,44 +92,20 @@ function PersonalDataForm(props) {
   );
 }
 
-const INITAL_FORM_VALUES = {
-  cedula: "",
-  birthdate: ""
+const INITAL_FORM_STATE = {
+  firstName: "",
+  lastName: "",
+  birthdate: "",
+  sex: "",
+  citizenship: ""
 };
 const EnhancedForm = withFormik({
-  mapPropsToValues: () => INITAL_FORM_VALUES,
-  handleSubmit: () => {
-    console.log(responseData);
-    console.log("submitting after validated?");
-  },
-  validate: async (values, ...args) => {
-    const errors = {};
-
-    if (!values.cedula) {
-      errors.cedula = "Cedula is required";
-    }
-
-    responseData = {};
-    const citizenData = await fetchCitizenData(values.cedula).catch(e => {
-      errors.cedula = "La Cedula no es valida";
-    });
-    responseData = citizenData;
-    const { fechNacim: birthdate = "" } = citizenData || {};
-
-    let isSame = dayjs(birthdate).isSame(dayjs(values.birthdate));
-    if (!isSame) {
-      errors.birthdate = "Cedula and Birthdate do not match";
-    }
-
-    if (!values.birthdate) {
-      errors.birthdate = "Birthdate is required";
-    }
-
-    return errors;
-  },
+  mapPropsToValues: () => INITAL_FORM_STATE,
+  handleSubmit: () => {},
+  validate: () => {},
   validateOnChange: false,
   validateOnMount: false,
-  validateOnBlur: false
+  validateOnBlur: true
 })(PersonalDataForm);
 
 export default EnhancedForm;
